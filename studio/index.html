@@ -67,7 +67,10 @@
 </head>
 <body>
   <main>
-    <img src="apple-touch-icon.png?v=3" alt="Team Ranks icon">
+    <img id="launcher-logo"
+      src="https://raw.githubusercontent.com/paulvseverino-personal/scorecard-launchers/main/studio/apple-touch-icon.png?v=4"
+      alt="Team Ranks icon"
+    >
     <h1>Team Ranks</h1>
     <p>Add this page to your Home Screen. After that, the new icon will open Team Ranks directly.</p>
     <button type="button" id="open-app">Open Team Ranks</button>
@@ -86,8 +89,37 @@
       window.location.href = freshAppUrl();
     });
 
+    async function openFromHomeScreen() {
+      const logo = document.getElementById('launcher-logo');
+      const instructions = document.querySelector('p');
+      const button = document.getElementById('open-app');
+
+      instructions.textContent = 'Opening Team Ranks…';
+      button.hidden = true;
+
+      // Let Safari fully load and paint the launcher logo before redirecting.
+      try {
+        if (!logo.complete || logo.naturalWidth === 0) {
+          await Promise.race([
+            new Promise(resolve => {
+              logo.addEventListener('load', resolve, { once: true });
+              logo.addEventListener('error', resolve, { once: true });
+            }),
+            new Promise(resolve => setTimeout(resolve, 2500))
+          ]);
+        }
+
+        if (logo.decode) {
+          await logo.decode().catch(() => {});
+        }
+      } finally {
+        await new Promise(resolve => setTimeout(resolve, 900));
+        window.location.replace(freshAppUrl());
+      }
+    }
+
     if (isHomeScreen) {
-      window.location.replace(freshAppUrl());
+      openFromHomeScreen();
     }
   </script>
 </body>
