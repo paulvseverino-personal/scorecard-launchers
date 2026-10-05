@@ -9,8 +9,9 @@
   <meta name="apple-mobile-web-app-title" content="Rams GM">
   <meta name="mobile-web-app-capable" content="yes">
   <title>Rams Assistant GM</title>
-  <link rel="icon" href="apple-touch-icon.png">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="launcher-logo.png?v=20261005">
+  <link rel="shortcut icon" type="image/png" href="launcher-logo.png?v=20261005">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20261005">
   <style>
     :root{--navy:#001f52;--blue:#003594;--yellow:#ffd100;--ink:#eef4ff;--muted:#b8c7e3}
     *{box-sizing:border-box}
@@ -24,23 +25,54 @@
     .sub{margin:0;color:var(--muted);font-size:14px}
     .browser-link{display:inline-block;margin-top:24px;color:var(--yellow);font-size:12px;font-weight:800;text-decoration:none}
     .disclaimer{margin:18px 0 0;color:#8093b5;font-size:9px;line-height:1.4}
+    html,body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden;background:#001f52}
+    body{position:fixed;inset:0;display:block;padding:0}
+    .app-frame{position:fixed;inset:0;z-index:2;width:100%;height:100%;height:100dvh;border:0;background:#001f52;opacity:0;transition:opacity .2s ease}
+    .app-frame.ready{opacity:1}
+    .loading-shell{position:fixed;inset:0;z-index:1;display:grid;place-content:center;justify-items:center;gap:10px;padding:24px;text-align:center;background:radial-gradient(circle at 80% 0,#0b4aa9 0,transparent 38%),linear-gradient(180deg,#001f52,#020d21);color:#eef4ff;transition:opacity .2s ease}
+    .loading-shell.hidden{opacity:0;pointer-events:none}
+    .loading-mark{display:grid;place-items:center;width:88px;height:88px;margin-bottom:10px;border:1px solid rgba(255,255,255,.18);border-radius:22px;background:linear-gradient(145deg,#003594,#001f52);color:#ffd100;font-size:26px;font-weight:900;letter-spacing:.05em;box-shadow:0 14px 38px rgba(0,0,0,.35)}
+    .loading-shell strong{font-size:20px}
+    .loading-shell span{color:#b8c7e3;font-size:13px}
+    .direct-link{position:fixed;right:14px;bottom:max(14px,env(safe-area-inset-bottom));z-index:3;display:none;padding:9px 12px;border-radius:999px;background:rgba(0,31,82,.92);color:#ffd100;font-size:12px;font-weight:800;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+    .direct-link.show{display:inline-flex}
   </style>
 </head>
 <body>
-  <main>
-    <div class="icon-shell">
-      <div class="icon-fallback" aria-hidden="true">LAR</div>
-      <div class="icon-art" role="img" aria-label="Rams Assistant GM icon"></div>
-    </div>
-    <h1>Rams Assistant GM</h1>
-    <p class="sub">Front Office Command Center</p>
-    <a class="browser-link" href="https://script.google.com/macros/s/AKfycbyXH_0KWJM_MSvFV2rQ-jqW4Y0MlZosXtyr3rX4bMTqFeuoSXfNB1JBBuSJq1wBpPL2CA/exec">Open Rams GM</a>
-    <p class="disclaimer">Unofficial personal franchise tracker.</p>
-  </main>
+  <div id="loading" class="loading-shell" role="status" aria-live="polite">
+    <div class="loading-mark" aria-hidden="true">LAR</div>
+    <strong>Opening Rams Assistant GM…</strong>
+    <span>Connecting to the live front office</span>
+  </div>
+
+  <iframe
+    id="ramsApp"
+    class="app-frame"
+    title="Rams Assistant GM"
+    src="https://script.google.com/macros/s/AKfycbyXH_0KWJM_MSvFV2rQ-jqW4Y0MlZosXtyr3rX4bMTqFeuoSXfNB1JBBuSJq1wBpPL2CA/exec"
+    allow="clipboard-read; clipboard-write"
+    referrerpolicy="strict-origin-when-cross-origin"
+  ></iframe>
+
+  <a
+    id="directLink"
+    class="direct-link"
+    href="https://script.google.com/macros/s/AKfycbyXH_0KWJM_MSvFV2rQ-jqW4Y0MlZosXtyr3rX4bMTqFeuoSXfNB1JBBuSJq1wBpPL2CA/exec"
+  >Open directly</a>
+
   <script>
-    const APP_URL = 'https://script.google.com/macros/s/AKfycbyXH_0KWJM_MSvFV2rQ-jqW4Y0MlZosXtyr3rX4bMTqFeuoSXfNB1JBBuSJq1wBpPL2CA/exec';
-    const installed = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    if (installed) window.location.replace(APP_URL);
+    const frame = document.getElementById('ramsApp');
+    const loading = document.getElementById('loading');
+    const directLink = document.getElementById('directLink');
+
+    frame.addEventListener('load', () => {
+      frame.classList.add('ready');
+      loading.classList.add('hidden');
+    });
+
+    window.setTimeout(() => {
+      if (!frame.classList.contains('ready')) directLink.classList.add('show');
+    }, 10000);
   </script>
 </body>
 </html>
