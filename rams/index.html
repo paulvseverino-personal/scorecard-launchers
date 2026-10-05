@@ -49,7 +49,6 @@
     id="ramsApp"
     class="app-frame"
     title="Rams Assistant GM"
-    src="https://script.google.com/macros/s/AKfycbyXH_0KWJM_MSvFV2rQ-jqW4Y0MlZosXtyr3rX4bMTqFeuoSXfNB1JBBuSJq1wBpPL2CA/exec"
     allow="clipboard-read; clipboard-write"
     referrerpolicy="strict-origin-when-cross-origin"
   ></iframe>
@@ -61,9 +60,18 @@
   >Open directly</a>
 
   <script>
+    const APP_URL = 'https://script.google.com/macros/s/AKfycbyXH_0KWJM_MSvFV2rQ-jqW4Y0MlZosXtyr3rX4bMTqFeuoSXfNB1JBBuSJq1wBpPL2CA/exec';
     const frame = document.getElementById('ramsApp');
     const loading = document.getElementById('loading');
     const directLink = document.getElementById('directLink');
+    const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isAppleMobile) {
+      window.location.replace(APP_URL);
+    } else {
+      frame.src = APP_URL;
+    }
 
     frame.addEventListener('load', () => {
       frame.classList.add('ready');
