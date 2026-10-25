@@ -72,14 +72,12 @@
       alt="Pitcher Prep icon"
     >
     <h1>Pitcher Prep</h1>
-    <p>Add this page to your Home Screen. After that, the new icon will open Pitcher Prep directly.</p>
-    <button type="button" id="open-app">Open Pitcher Prep</button>
+    <p id="status">Opening Pitcher Prep…</p>
+    <button type="button" id="open-app" hidden>Open Pitcher Prep</button>
   </main>
 
   <script>
     const APP_URL = 'https://script.google.com/macros/s/AKfycbyS4lVBcFLyUKL8nXodM2HFo8z50IJYdKQMyM0HjvbhFmrk0S1grALNRu_zcYkKLWzh/exec';
-    const isHomeScreen = window.navigator.standalone === true ||
-      window.matchMedia('(display-mode: standalone)').matches;
 
     function freshAppUrl() {
       return APP_URL + '?launch=' + Date.now();
@@ -89,15 +87,10 @@
       window.location.href = freshAppUrl();
     });
 
-    async function openFromHomeScreen() {
+    async function openPitcherPrep() {
       const logo = document.getElementById('launcher-logo');
-      const instructions = document.querySelector('p');
-      const button = document.getElementById('open-app');
 
-      instructions.textContent = 'Opening Pitcher Prep…';
-      button.hidden = true;
-
-      // Let Safari load and paint the icon before redirecting.
+      // Allow the launcher icon to load before redirecting.
       try {
         if (!logo.complete || logo.naturalWidth === 0) {
           await Promise.race([
@@ -118,9 +111,9 @@
       }
     }
 
-    if (isHomeScreen) {
-      openFromHomeScreen();
-    }
+    // Automatically open the app from Safari bookmarks
+    // and standalone Home Screen launches.
+    openPitcherPrep();
   </script>
 </body>
 </html>
